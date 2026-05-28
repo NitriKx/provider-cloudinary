@@ -1,0 +1,12 @@
+apiVersion: folder.cloudinary.m.crossplane.io/v1alpha1
+kind: Folder
+metadata:
+  annotations:
+    meta.upbound.io/example-id: folder/v1alpha1/folder
+  labels:
+    testing.upbound.io/example-name: assets
+  name: assets
+  namespace: crossplane-system
+spec:
+  forProvider:
+    path: production/assets

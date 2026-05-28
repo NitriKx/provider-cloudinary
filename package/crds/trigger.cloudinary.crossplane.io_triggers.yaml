@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.20.1
-  name: resources.null.cloudinary.crossplane.io
+  name: triggers.trigger.cloudinary.crossplane.io
 spec:
-  group: null.cloudinary.crossplane.io
+  group: trigger.cloudinary.crossplane.io
   names:
     categories:
     - crossplane
     - managed
     - cloudinary
-    kind: Resource
-    listKind: ResourceList
-    plural: resources
-    singular: resource
+    kind: Trigger
+    listKind: TriggerList
+    plural: triggers
+    singular: trigger
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,10 +34,10 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Resource is the Schema for the Resources API. The null_resource
-          resource implements the standard resource lifecycle but takes no further
-          action.hashicorp. The triggers argument allows specifying an arbitrary set
-          of values that, when changed, will cause the resource to be replaced.
+        description: Trigger is the Schema for the Triggers API. Manages a Cloudinary
+          webhook notification trigger. Triggers fire on specific asset events and
+          POST a payload to a configured URL. Up to 30 triggers per product environment
+          (the console UI shows only 10).
         properties:
           apiVersion:
             description: |-
@@ -57,7 +57,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: ResourceSpec defines the desired state of Resource
+            description: TriggerSpec defines the desired state of Trigger
             properties:
               deletionPolicy:
                 default: Delete
@@ -75,14 +75,36 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  triggers:
-                    additionalProperties:
-                      type: string
+                  additive:
                     description: |-
-                      running any associated provisioners.
-                      A map of arbitrary strings that, when changed, will force the null resource to be replaced, re-running any associated provisioners.
-                    type: object
-                    x-kubernetes-map-type: granular
+                      asset notification_url. Default false.
+                      When true, this global trigger fires in addition to any per-asset notification_url. Default false.
+                    type: boolean
+                  authScheme:
+                    description: |-
+                      (String) Signature method for verifying incoming webhook payloads. One of: default, legacy_hmac, eddsa_v2.
+                      Signature method for verifying incoming webhook payloads. One of: default, legacy_hmac, eddsa_v2.
+                    type: string
+                  eventType:
+                    description: |-
+                      (String) The event that fires the trigger. One of: upload, delete, rename, move, eager, explode, multi, resource_tags_changed, resource_context_changed, resource_metadata_changed, resource_display_name_changed, access_control_changed, related_assets, create_folder, delete_folder, move_or_rename_asset_folder, proof_status_changed, error, all.
+                      The event that fires the trigger. One of: upload, delete, rename, move, eager, explode, multi, resource_tags_changed, resource_context_changed, resource_metadata_changed, resource_display_name_changed, access_control_changed, related_assets, create_folder, delete_folder, move_or_rename_asset_folder, proof_status_changed, error, all.
+                    type: string
+                  filter:
+                    description: |-
+                      encoded) that filters which events fire this trigger. When set, filter_language is automatically sent as "jsonlogic". Example: "{"==":[{"var":"resource_type"},"image"]}"
+                      A JSONLogic expression (JSON-encoded) that filters which events fire this trigger. When set, filter_language is automatically sent as "jsonlogic". Example: "{\"==\":[{\"var\":\"resource_type\"},\"image\"]}"
+                    type: string
+                  payloadTemplate:
+                    description: |-
+                      encoded, max 16KB) that customises the notification payload. Available namespaces: event, asset, folder, eager, error, raw.
+                      A Mustache template object (JSON-encoded, max 16KB) that customises the notification payload. Available namespaces: event, asset, folder, eager, error, raw.
+                    type: string
+                  uri:
+                    description: |-
+                      (String) The webhook URL to which Cloudinary sends the notification payload.
+                      The webhook URL to which Cloudinary sends the notification payload.
+                    type: string
                 type: object
               initProvider:
                 description: |-
@@ -97,14 +119,36 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  triggers:
-                    additionalProperties:
-                      type: string
+                  additive:
                     description: |-
-                      running any associated provisioners.
-                      A map of arbitrary strings that, when changed, will force the null resource to be replaced, re-running any associated provisioners.
-                    type: object
-                    x-kubernetes-map-type: granular
+                      asset notification_url. Default false.
+                      When true, this global trigger fires in addition to any per-asset notification_url. Default false.
+                    type: boolean
+                  authScheme:
+                    description: |-
+                      (String) Signature method for verifying incoming webhook payloads. One of: default, legacy_hmac, eddsa_v2.
+                      Signature method for verifying incoming webhook payloads. One of: default, legacy_hmac, eddsa_v2.
+                    type: string
+                  eventType:
+                    description: |-
+                      (String) The event that fires the trigger. One of: upload, delete, rename, move, eager, explode, multi, resource_tags_changed, resource_context_changed, resource_metadata_changed, resource_display_name_changed, access_control_changed, related_assets, create_folder, delete_folder, move_or_rename_asset_folder, proof_status_changed, error, all.
+                      The event that fires the trigger. One of: upload, delete, rename, move, eager, explode, multi, resource_tags_changed, resource_context_changed, resource_metadata_changed, resource_display_name_changed, access_control_changed, related_assets, create_folder, delete_folder, move_or_rename_asset_folder, proof_status_changed, error, all.
+                    type: string
+                  filter:
+                    description: |-
+                      encoded) that filters which events fire this trigger. When set, filter_language is automatically sent as "jsonlogic". Example: "{"==":[{"var":"resource_type"},"image"]}"
+                      A JSONLogic expression (JSON-encoded) that filters which events fire this trigger. When set, filter_language is automatically sent as "jsonlogic". Example: "{\"==\":[{\"var\":\"resource_type\"},\"image\"]}"
+                    type: string
+                  payloadTemplate:
+                    description: |-
+                      encoded, max 16KB) that customises the notification payload. Available namespaces: event, asset, folder, eager, error, raw.
+                      A Mustache template object (JSON-encoded, max 16KB) that customises the notification payload. Available namespaces: event, asset, folder, eager, error, raw.
+                    type: string
+                  uri:
+                    description: |-
+                      (String) The webhook URL to which Cloudinary sends the notification payload.
+                      The webhook URL to which Cloudinary sends the notification payload.
+                    type: string
                 type: object
               managementPolicies:
                 default:
@@ -192,23 +236,74 @@ spec:
             required:
             - forProvider
             type: object
+            x-kubernetes-validations:
+            - message: spec.forProvider.eventType is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.eventType)
+                || (has(self.initProvider) && has(self.initProvider.eventType))'
+            - message: spec.forProvider.uri is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.uri)
+                || (has(self.initProvider) && has(self.initProvider.uri))'
           status:
-            description: ResourceStatus defines the observed state of Resource.
+            description: TriggerStatus defines the observed state of Trigger.
             properties:
               atProvider:
                 properties:
-                  id:
-                    description: (String) This is set to a random value at create
-                      time.
-                    type: string
-                  triggers:
-                    additionalProperties:
-                      type: string
+                  additive:
                     description: |-
-                      running any associated provisioners.
-                      A map of arbitrary strings that, when changed, will force the null resource to be replaced, re-running any associated provisioners.
-                    type: object
-                    x-kubernetes-map-type: granular
+                      asset notification_url. Default false.
+                      When true, this global trigger fires in addition to any per-asset notification_url. Default false.
+                    type: boolean
+                  authScheme:
+                    description: |-
+                      (String) Signature method for verifying incoming webhook payloads. One of: default, legacy_hmac, eddsa_v2.
+                      Signature method for verifying incoming webhook payloads. One of: default, legacy_hmac, eddsa_v2.
+                    type: string
+                  createdAt:
+                    description: |-
+                      (String) ISO 8601 timestamp of when the trigger was created.
+                      ISO 8601 timestamp of when the trigger was created.
+                    type: string
+                  eventType:
+                    description: |-
+                      (String) The event that fires the trigger. One of: upload, delete, rename, move, eager, explode, multi, resource_tags_changed, resource_context_changed, resource_metadata_changed, resource_display_name_changed, access_control_changed, related_assets, create_folder, delete_folder, move_or_rename_asset_folder, proof_status_changed, error, all.
+                      The event that fires the trigger. One of: upload, delete, rename, move, eager, explode, multi, resource_tags_changed, resource_context_changed, resource_metadata_changed, resource_display_name_changed, access_control_changed, related_assets, create_folder, delete_folder, move_or_rename_asset_folder, proof_status_changed, error, all.
+                    type: string
+                  filter:
+                    description: |-
+                      encoded) that filters which events fire this trigger. When set, filter_language is automatically sent as "jsonlogic". Example: "{"==":[{"var":"resource_type"},"image"]}"
+                      A JSONLogic expression (JSON-encoded) that filters which events fire this trigger. When set, filter_language is automatically sent as "jsonlogic". Example: "{\"==\":[{\"var\":\"resource_type\"},\"image\"]}"
+                    type: string
+                  id:
+                    description: (String) The unique identifier of the trigger assigned
+                      by Cloudinary.
+                    type: string
+                  payloadTemplate:
+                    description: |-
+                      encoded, max 16KB) that customises the notification payload. Available namespaces: event, asset, folder, eager, error, raw.
+                      A Mustache template object (JSON-encoded, max 16KB) that customises the notification payload. Available namespaces: event, asset, folder, eager, error, raw.
+                    type: string
+                  productEnvironmentId:
+                    description: |-
+                      (String) The product environment this trigger is scoped to.
+                      The product environment this trigger is scoped to.
+                    type: string
+                  updatedAt:
+                    description: |-
+                      (String) ISO 8601 timestamp of when the trigger was last updated.
+                      ISO 8601 timestamp of when the trigger was last updated.
+                    type: string
+                  uri:
+                    description: |-
+                      (String) The webhook URL to which Cloudinary sends the notification payload.
+                      The webhook URL to which Cloudinary sends the notification payload.
+                    type: string
+                  uriType:
+                    description: |-
+                      (String) The type of the URI. Always "webhook".
+                      The type of the URI. Always "webhook".
+                    type: string
                 type: object
               conditions:
                 description: Conditions of the resource.

@@ -1,0 +1,12 @@
+apiVersion: trigger.cloudinary.crossplane.io/v1alpha1
+kind: Trigger
+metadata:
+  annotations:
+    meta.upbound.io/example-id: trigger/v1alpha1/trigger
+  labels:
+    testing.upbound.io/example-name: on_upload
+  name: on-upload
+spec:
+  forProvider:
+    eventType: upload
+    uri: https://example.com/webhooks/cloudinary

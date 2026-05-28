@@ -4,19 +4,19 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.20.1
-  name: resources.null.cloudinary.m.crossplane.io
+  name: folders.folder.cloudinary.crossplane.io
 spec:
-  group: null.cloudinary.m.crossplane.io
+  group: folder.cloudinary.crossplane.io
   names:
     categories:
     - crossplane
     - managed
     - cloudinary
-    kind: Resource
-    listKind: ResourceList
-    plural: resources
-    singular: resource
-  scope: Namespaced
+    kind: Folder
+    listKind: FolderList
+    plural: folders
+    singular: folder
+  scope: Cluster
   versions:
   - additionalPrinterColumns:
     - jsonPath: .status.conditions[?(@.type=='Synced')].status
@@ -34,10 +34,8 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Resource is the Schema for the Resources API. The null_resource
-          resource implements the standard resource lifecycle but takes no further
-          action.hashicorp. The triggers argument allows specifying an arbitrary set
-          of values that, when changed, will cause the resource to be replaced.
+        description: Folder is the Schema for the Folders API. Manages a Cloudinary
+          folder. Folders are used to organize assets in your Cloudinary account.
         properties:
           apiVersion:
             description: |-
@@ -57,18 +55,29 @@ spec:
           metadata:
             type: object
           spec:
-            description: ResourceSpec defines the desired state of Resource
+            description: FolderSpec defines the desired state of Folder
             properties:
+              deletionPolicy:
+                default: Delete
+                description: |-
+                  DeletionPolicy specifies what will happen to the underlying external
+                  when this managed resource is deleted - either "Delete" or "Orphan" the
+                  external resource.
+                  This field is planned to be deprecated in favor of the ManagementPolicies
+                  field in a future release. Currently, both could be set independently and
+                  non-default values would be honored if the feature flag is enabled.
+                  See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
+                enum:
+                - Orphan
+                - Delete
+                type: string
               forProvider:
                 properties:
-                  triggers:
-                    additionalProperties:
-                      type: string
+                  path:
                     description: |-
-                      running any associated provisioners.
-                      A map of arbitrary strings that, when changed, will force the null resource to be replaced, re-running any associated provisioners.
-                    type: object
-                    x-kubernetes-map-type: granular
+                      (String) The full path of the folder (e.g. "production/images"). Segments are separated by "/". Must not start or end with "/". Forbidden characters: ? & # \ % < >
+                      The full path of the folder (e.g. "production/images"). Segments are separated by "/". Must not start or end with "/". Forbidden characters: ? & # \ % < >
+                    type: string
                 type: object
               initProvider:
                 description: |-
@@ -83,14 +92,11 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
-                  triggers:
-                    additionalProperties:
-                      type: string
+                  path:
                     description: |-
-                      running any associated provisioners.
-                      A map of arbitrary strings that, when changed, will force the null resource to be replaced, re-running any associated provisioners.
-                    type: object
-                    x-kubernetes-map-type: granular
+                      (String) The full path of the folder (e.g. "production/images"). Segments are separated by "/". Must not start or end with "/". Forbidden characters: ? & # \ % < >
+                      The full path of the folder (e.g. "production/images"). Segments are separated by "/". Must not start or end with "/". Forbidden characters: ? & # \ % < >
+                    type: string
                 type: object
               managementPolicies:
                 default:
@@ -100,6 +106,10 @@ spec:
                   through a Crossplane feature flag.
                   ManagementPolicies specify the array of actions Crossplane is allowed to
                   take on the managed and external resources.
+                  This field is planned to replace the DeletionPolicy field in a future
+                  release. Currently, both could be set independently and non-default
+                  values would be honored if the feature flag is enabled. If both are
+                  custom, the DeletionPolicy field will be ignored.
                   See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
                   and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
                 items:
@@ -117,21 +127,41 @@ spec:
                 type: array
               providerConfigRef:
                 default:
-                  kind: ClusterProviderConfig
                   name: default
                 description: |-
                   ProviderConfigReference specifies how the provider that will be used to
                   create, observe, update, and delete this managed resource should be
                   configured.
                 properties:
-                  kind:
-                    description: Kind of the referenced object.
-                    type: string
                   name:
                     description: Name of the referenced object.
                     type: string
+                  policy:
+                    description: Policies for referencing.
+                    properties:
+                      resolution:
+                        default: Required
+                        description: |-
+                          Resolution specifies whether resolution of this reference is required.
+                          The default is 'Required', which means the reconcile will fail if the
+                          reference cannot be resolved. 'Optional' means this reference will be
+                          a no-op if it cannot be resolved.
+                        enum:
+                        - Required
+                        - Optional
+                        type: string
+                      resolve:
+                        description: |-
+                          Resolve specifies when this reference should be resolved. The default
+                          is 'IfNotPresent', which will attempt to resolve the reference only when
+                          the corresponding field is not present. Use 'Always' to resolve the
+                          reference on every reconcile.
+                        enum:
+                        - Always
+                        - IfNotPresent
+                        type: string
+                    type: object
                 required:
-                - kind
                 - name
                 type: object
               writeConnectionSecretToRef:
@@ -144,29 +174,45 @@ spec:
                   name:
                     description: Name of the secret.
                     type: string
+                  namespace:
+                    description: Namespace of the secret.
+                    type: string
                 required:
                 - name
+                - namespace
                 type: object
             required:
             - forProvider
             type: object
+            x-kubernetes-validations:
+            - message: spec.forProvider.path is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.path)
+                || (has(self.initProvider) && has(self.initProvider.path))'
           status:
-            description: ResourceStatus defines the observed state of Resource.
+            description: FolderStatus defines the observed state of Folder.
             properties:
               atProvider:
                 properties:
-                  id:
-                    description: (String) This is set to a random value at create
-                      time.
-                    type: string
-                  triggers:
-                    additionalProperties:
-                      type: string
+                  externalId:
                     description: |-
-                      running any associated provisioners.
-                      A map of arbitrary strings that, when changed, will force the null resource to be replaced, re-running any associated provisioners.
-                    type: object
-                    x-kubernetes-map-type: granular
+                      (String) The folder's external ID assigned by Cloudinary. Use this value in Cedar policy statements (e.g. resource.ancestor_ids.contains("...")).
+                      The folder's external ID assigned by Cloudinary. Use this value in Cedar policy statements (e.g. resource.ancestor_ids.contains("...")).
+                    type: string
+                  id:
+                    description: (String) The folder's external ID assigned by Cloudinary
+                      (same as external_id).
+                    type: string
+                  name:
+                    description: |-
+                      (String) The leaf name of the folder (the last component of the path).
+                      The leaf name of the folder (the last component of the path).
+                    type: string
+                  path:
+                    description: |-
+                      (String) The full path of the folder (e.g. "production/images"). Segments are separated by "/". Must not start or end with "/". Forbidden characters: ? & # \ % < >
+                      The full path of the folder (e.g. "production/images"). Segments are separated by "/". Must not start or end with "/". Forbidden characters: ? & # \ % < >
+                    type: string
                 type: object
               conditions:
                 description: Conditions of the resource.

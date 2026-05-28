@@ -9,14 +9,18 @@ import (
 
 	"github.com/crossplane/upjet/v2/pkg/controller"
 
+	folder "github.com/NitriKx/provider-cloudinary/internal/controller/namespaced/folder/folder"
 	providerconfig "github.com/NitriKx/provider-cloudinary/internal/controller/namespaced/providerconfig"
+	trigger "github.com/NitriKx/provider-cloudinary/internal/controller/namespaced/trigger/trigger"
 )
 
 // Setup creates all controllers with the supplied logger and adds them to
 // the supplied manager.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
+		folder.Setup,
 		providerconfig.Setup,
+		trigger.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {
 			return err
@@ -29,7 +33,9 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 // the supplied manager gated.
 func SetupGated(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
+		folder.SetupGated,
 		providerconfig.SetupGated,
+		trigger.SetupGated,
 	} {
 		if err := setup(mgr, o); err != nil {
 			return err
