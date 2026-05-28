@@ -1,0 +1,44 @@
+name: NitriKx/cloudinary
+resources:
+    cloudinary_folder:
+        subCategory: ""
+        description: Manages a Cloudinary folder.
+        name: cloudinary_folder
+        title: cloudinary_folder Resource - terraform-provider-cloudinary
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "path": "example/folder"
+                }
+        argumentDocs:
+            id: (String) The external_id of the folder.
+            external_id: (String) The unique identifier of the folder assigned by Cloudinary.
+            path: (String) The folder path (e.g. "campaigns/2026"). No leading or trailing slashes.
+            name: (String) The leaf name component of the folder path.
+        importStatements: []
+    cloudinary_trigger:
+        subCategory: ""
+        description: Manages a Cloudinary webhook trigger.
+        name: cloudinary_trigger
+        title: cloudinary_trigger Resource - terraform-provider-cloudinary
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "uri": "https://example.com/cloudinary-webhook",
+                  "event_type": "upload"
+                }
+        argumentDocs:
+            id: (String) The trigger ID assigned by Cloudinary.
+            uri: (String) The webhook URL to send notifications to.
+            event_type: (String) The event type that triggers this webhook (e.g. upload, delete, all).
+            additive: (Boolean) Whether additional triggers can be registered for the same event type.
+            filter: (String) JSONLogic filter expression (JSON-encoded string).
+            payload_template: (String) Mustache payload template (JSON-encoded string, max 16 KB).
+            auth_scheme: (String) Authentication scheme for the webhook (default, legacy_hmac, eddsa_v2).
+            product_environment_id: (String) The product environment ID.
+            uri_type: (String) The URI type (always "webhook").
+            created_at: (String) Timestamp when the trigger was created.
+            updated_at: (String) Timestamp when the trigger was last updated.
+        importStatements: []
