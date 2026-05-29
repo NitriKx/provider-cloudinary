@@ -175,7 +175,8 @@ generate-code:
 
 pull-docs:
 	@mkdir -p "$(WORK_DIR)/$(TERRAFORM_PROVIDER_SOURCE)/docs"
-	@if [ ! -d "$(WORK_DIR)/$(TERRAFORM_PROVIDER_SOURCE)/$(TERRAFORM_DOCS_PATH)" ]; then \
+	@if [ ! -d "$(WORK_DIR)/$(TERRAFORM_PROVIDER_SOURCE)/$(TERRAFORM_DOCS_PATH)" ] && \
+	   [ -d "../terraform-provider-cloudinary/$(TERRAFORM_DOCS_PATH)" ]; then \
 		cp -r "../terraform-provider-cloudinary/$(TERRAFORM_DOCS_PATH)" "$(WORK_DIR)/$(TERRAFORM_PROVIDER_SOURCE)/$(TERRAFORM_DOCS_PATH)"; \
 	fi
 

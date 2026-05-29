@@ -171,7 +171,7 @@ func main() {
 				MRStateMetrics:          stateMetrics,
 			},
 		},
-		Provider: config.GetProvider(),
+		Provider:       config.GetProvider(),
 		WorkspaceStore: terraform.NewWorkspaceStore(log),
 		SetupFn:        clients.TerraformSetupBuilder(*terraformVersion, *providerSource, *providerVersion, nativeScheduler),
 		StartWebhooks:  *certsDir != "",
