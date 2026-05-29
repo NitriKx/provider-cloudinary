@@ -1,0 +1,12 @@
+apiVersion: folder.cloudinary.crossplane.io/v1alpha1
+kind: Folder
+metadata:
+  name: example-folder
+  annotations:
+    # The folder path is the only required field.
+    # external_id is assigned by Cloudinary after creation and used as the stable identifier.
+spec:
+  forProvider:
+    path: crossplane/examples
+  providerConfigRef:
+    name: default

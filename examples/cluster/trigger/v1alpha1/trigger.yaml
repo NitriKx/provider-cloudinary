@@ -1,0 +1,19 @@
+apiVersion: trigger.cloudinary.crossplane.io/v1alpha1
+kind: Trigger
+metadata:
+  name: on-upload
+spec:
+  forProvider:
+    # Webhook URL that Cloudinary will POST to on the given event
+    uri: https://example.com/webhooks/cloudinary
+    # One of: upload, delete, rename, move, eager, explode, multi,
+    #   resource_tags_changed, resource_context_changed, resource_metadata_changed,
+    #   resource_display_name_changed, access_control_changed, related_assets,
+    #   create_folder, delete_folder, move_or_rename_asset_folder,
+    #   proof_status_changed, error, all
+    eventType: upload
+    # authScheme controls how webhook payloads are signed.
+    # One of: default, legacy_hmac, eddsa_v2
+    authScheme: default
+  providerConfigRef:
+    name: default
