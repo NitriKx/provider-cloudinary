@@ -1,4 +1,4 @@
-name: NitriKx/cloudinary
+name: nitrikx/cloudinary
 resources:
     cloudinary_folder:
         subCategory: ""
