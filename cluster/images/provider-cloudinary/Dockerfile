@@ -50,7 +50,7 @@ RUN chmod +x ${PLUGIN_DIR}/${TERRAFORM_NATIVE_PROVIDER_BINARY}
 # Configure terraform to use the local mirror and never contact the internet.
 ENV TF_CLI_CONFIG_FILE=/terraform/.terraformrc
 ENV TF_FORK=0
-COPY cluster/images/provider-cloudinary/terraformrc.hcl ${TF_CLI_CONFIG_FILE}
+COPY terraformrc.hcl ${TF_CLI_CONFIG_FILE}
 RUN chown -R ${USER_ID}:${USER_ID} /terraform
 
 # Runtime environment passed to the Crossplane provider binary.
