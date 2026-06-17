@@ -15,6 +15,8 @@ var ExternalNameConfigs = map[string]config.ExternalName{
 	"cloudinary_folder": config.IdentifierFromProvider,
 	// id is the trigger ID assigned by Cloudinary on create.
 	"cloudinary_trigger": config.IdentifierFromProvider,
+	// id is the preset name, returned by the provider on create.
+	"cloudinary_upload_preset": config.IdentifierFromProvider,
 }
 
 // ExternalNameConfigurations applies all external name configs listed in the

@@ -12,6 +12,7 @@ import (
 	folder "github.com/NitriKx/provider-cloudinary/internal/controller/cluster/folder/folder"
 	providerconfig "github.com/NitriKx/provider-cloudinary/internal/controller/cluster/providerconfig"
 	trigger "github.com/NitriKx/provider-cloudinary/internal/controller/cluster/trigger/trigger"
+	uploadpreset "github.com/NitriKx/provider-cloudinary/internal/controller/cluster/uploadpreset/uploadpreset"
 )
 
 // Setup creates all controllers with the supplied logger and adds them to
@@ -21,6 +22,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		folder.Setup,
 		providerconfig.Setup,
 		trigger.Setup,
+		uploadpreset.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {
 			return err
@@ -36,6 +38,7 @@ func SetupGated(mgr ctrl.Manager, o controller.Options) error {
 		folder.SetupGated,
 		providerconfig.SetupGated,
 		trigger.SetupGated,
+		uploadpreset.SetupGated,
 	} {
 		if err := setup(mgr, o); err != nil {
 			return err

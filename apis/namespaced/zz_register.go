@@ -12,6 +12,7 @@ import (
 
 	v1alpha1 "github.com/NitriKx/provider-cloudinary/apis/namespaced/folder/v1alpha1"
 	v1alpha1trigger "github.com/NitriKx/provider-cloudinary/apis/namespaced/trigger/v1alpha1"
+	v1alpha1uploadpreset "github.com/NitriKx/provider-cloudinary/apis/namespaced/uploadpreset/v1alpha1"
 	v1alpha1namespaced "github.com/NitriKx/provider-cloudinary/apis/namespaced/v1alpha1"
 	v1beta1 "github.com/NitriKx/provider-cloudinary/apis/namespaced/v1beta1"
 )
@@ -21,6 +22,7 @@ func init() {
 	AddToSchemes = append(AddToSchemes,
 		v1alpha1.SchemeBuilder.AddToScheme,
 		v1alpha1trigger.SchemeBuilder.AddToScheme,
+		v1alpha1uploadpreset.SchemeBuilder.AddToScheme,
 		v1alpha1namespaced.SchemeBuilder.AddToScheme,
 		v1beta1.SchemeBuilder.AddToScheme,
 	)

@@ -8,8 +8,10 @@ import (
 
 	folderCluster "github.com/NitriKx/provider-cloudinary/config/cluster/folder"
 	triggerCluster "github.com/NitriKx/provider-cloudinary/config/cluster/trigger"
+	uploadPresetCluster "github.com/NitriKx/provider-cloudinary/config/cluster/upload_preset"
 	folderNamespaced "github.com/NitriKx/provider-cloudinary/config/namespaced/folder"
 	triggerNamespaced "github.com/NitriKx/provider-cloudinary/config/namespaced/trigger"
+	uploadPresetNamespaced "github.com/NitriKx/provider-cloudinary/config/namespaced/upload_preset"
 )
 
 const (
@@ -36,6 +38,7 @@ func GetProvider() *ujconfig.Provider {
 	for _, configure := range []func(provider *ujconfig.Provider){
 		folderCluster.Configure,
 		triggerCluster.Configure,
+		uploadPresetCluster.Configure,
 	} {
 		configure(pc)
 	}
@@ -60,6 +63,7 @@ func GetProviderNamespaced() *ujconfig.Provider {
 	for _, configure := range []func(provider *ujconfig.Provider){
 		folderNamespaced.Configure,
 		triggerNamespaced.Configure,
+		uploadPresetNamespaced.Configure,
 	} {
 		configure(pc)
 	}
