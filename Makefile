@@ -12,10 +12,10 @@ TERRAFORM_VERSION_VALID := $(shell [ "$(TERRAFORM_VERSION)" = "`printf "$(TERRAF
 
 export TERRAFORM_PROVIDER_SOURCE ?= nitrikx/cloudinary
 export TERRAFORM_PROVIDER_REPO ?= https://github.com/NitriKx/terraform-provider-cloudinary
-export TERRAFORM_PROVIDER_VERSION ?= 0.1.0
+export TERRAFORM_PROVIDER_VERSION ?= 0.2.0
 export TERRAFORM_PROVIDER_DOWNLOAD_NAME ?= terraform-provider-cloudinary
 export TERRAFORM_PROVIDER_DOWNLOAD_URL_PREFIX ?= https://github.com/NitriKx/terraform-provider-cloudinary/releases/download/v$(TERRAFORM_PROVIDER_VERSION)
-export TERRAFORM_NATIVE_PROVIDER_BINARY ?= terraform-provider-cloudinary_v0.1.0
+export TERRAFORM_NATIVE_PROVIDER_BINARY ?= terraform-provider-cloudinary_v0.2.0
 export TERRAFORM_DOCS_PATH ?= docs/resources
 
 
