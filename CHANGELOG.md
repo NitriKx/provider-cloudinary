@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/NitriKx/provider-cloudinary/compare/v0.2.0...v0.2.1) (2026-06-26)
+
+
+### Bug Fixes
+
+* **ci:** [INFRA-6551] embed runtime image in xpkg via crossplane CLI ([40481fc](https://github.com/NitriKx/provider-cloudinary/commit/40481fca69af76aa396f75735ca45129c05035f4))
+
 ## [0.2.0](https://github.com/NitriKx/provider-cloudinary/compare/v0.1.0...v0.2.0) (2026-06-26)
 
 
